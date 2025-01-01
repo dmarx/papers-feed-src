@@ -448,6 +448,53 @@
         input:checked + .slider:before {
             transform: translateX(16px);
         }
+
+        .rating-controls {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .rating-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--bg-color);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .rating-button:hover {
+            background: var(--button-hover);
+        }
+        
+        .rating-button.active {
+            background: var(--link-color);
+            color: white;
+            border-color: var(--link-color);
+        }
+        
+        .rating-button[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .extension-required {
+            display: none;
+            font-size: 0.875rem;
+            color: var(--secondary-text);
+            margin-top: 0.5rem;
+        }
+        
+        .extension-required.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -777,6 +824,22 @@
                 const tags = paper.arxiv_tags.join(', ');
                 metaParts.push(`<span class="meta-divider">•</span><span>${tags}</span>`);
             }
+
+            const ratingControls = `
+                <div class="rating-controls" data-arxiv-id="${paper.arxivId}">
+                    <button class="rating-button ${paper.rating === 'thumbsup' ? 'active' : ''}" 
+                            data-rating="thumbsup">
+                        👍 Interesting
+                    </button>
+                    <button class="rating-button ${paper.rating === 'thumbsdown' ? 'active' : ''}" 
+                            data-rating="thumbsdown">
+                        👎 Not Relevant
+                    </button>
+                    <div class="extension-required">
+                        ArXiv Tracker extension required for rating papers
+                    </div>
+                </div>
+            `;
             
             return `
                 <article class="paper-card ${expanded ? 'expanded' : ''}" data-paper-id="${paper.id}">
@@ -792,6 +855,7 @@
                         <div class="paper-content-inner">
                             <div class="paper-meta">
                                 ${metaParts.join('')}
+                                ${ratingControls}
                             </div>
                             <div class="paper-abstract">${paper.abstract}</div>
                         </div>
@@ -1036,9 +1100,93 @@
             document.getElementById('filtered-count').textContent = visibleCount;
         }
 
+        function initializeRatingControls() {
+            let extensionDetected = false;
+            
+            // Check for extension presence
+            window.dispatchEvent(new CustomEvent('check-arxiv-extension'));
+            
+            // Set timeout for extension detection
+            const timeout = setTimeout(() => {
+                document.querySelectorAll('.extension-required').forEach(el => {
+                    el.classList.add('visible');
+                });
+                document.querySelectorAll('.rating-button').forEach(btn => {
+                    btn.disabled = true;
+                });
+            }, 500);
+        
+            // Listen for extension presence
+            window.addEventListener('arxiv-extension-present', () => {
+                clearTimeout(timeout);
+                extensionDetected = true;
+                document.querySelectorAll('.rating-button').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }, { once: true });
+        
+            // Handle rating clicks
+            document.addEventListener('click', async (e) => {
+                const ratingButton = e.target.closest('.rating-button');
+                if (!ratingButton || !extensionDetected) return;
+        
+                const controls = ratingButton.closest('.rating-controls');
+                const arxivId = controls.dataset.arxivId;
+                const rating = ratingButton.dataset.rating;
+        
+                // Disable buttons during request
+                controls.querySelectorAll('.rating-button').forEach(btn => {
+                    btn.disabled = true;
+                });
+        
+                try {
+                    // Send message to extension
+                    window.postMessage({
+                        type: 'arxiv-rate-paper',
+                        payload: { arxivId, rating }
+                    }, '*');
+        
+                    // Wait for response
+                    const response = await new Promise((resolve) => {
+                        const handler = (event) => {
+                            if (event.data.type === 'arxiv-rating-response') {
+                                window.removeEventListener('message', handler);
+                                resolve(event.data.payload);
+                            }
+                        };
+                        window.addEventListener('message', handler);
+                    });
+        
+                    if (response.success) {
+                        // Update UI
+                        controls.querySelectorAll('.rating-button').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.rating === rating);
+                        });
+                        
+                        // Update data
+                        const paperId = controls.closest('.paper-card').dataset.paperId;
+                        if (window.yamlData[paperId]) {
+                            window.yamlData[paperId].rating = rating;
+                        }
+                    } else {
+                        throw new Error(response.error || 'Failed to update rating');
+                    }
+                } catch (error) {
+                    console.error('Rating error:', error);
+                    // Could add error UI here if desired
+                } finally {
+                    // Re-enable buttons
+                    controls.querySelectorAll('.rating-button').forEach(btn => {
+                        btn.disabled = false;
+                    });
+                }
+            });
+        }
+
         window.yamlData = {};
         initializeEventListeners();
         initializeFilters();
+        initializeRatingControls();
         renderPapers();
         
     </script>
