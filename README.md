@@ -6,10 +6,6 @@ At present, only arxiv is supported, with plans to support other journals/source
 
 # How it works
 
-**NB: YOU PROBABLY DON'T WANT TO CLONE *THIS* REPOSITORY.**
-
-This repository is my personal papers feed. The repository itself is used for data storage, and consequently is rather large.
-
 The system is comprised of the following components:
 
 * https://github.com/dmarx/papers-feed-src
