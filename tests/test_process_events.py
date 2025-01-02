@@ -42,7 +42,7 @@ def event_processor(tmp_path):
 class TestEventProcessor:
     def test_process_paper_issue(self, event_processor, sample_paper_issue, sample_paper):
         """Test processing paper registration issue."""
-        with patch('scripts.paper_manager.PaperManager.get_or_create_paper', return_value=sample_paper):
+        with patch('papers_feed.paper_manager.PaperManager.get_or_create_paper', return_value=sample_paper):
             success = event_processor.process_paper_issue(sample_paper_issue)
             
             assert success
@@ -61,9 +61,9 @@ class TestEventProcessor:
             })
         }
         
-        with patch('scripts.paper_manager.PaperManager.get_or_create_paper', return_value=sample_paper), \
-             patch('scripts.paper_manager.PaperManager.update_reading_time'), \
-             patch('scripts.paper_manager.PaperManager.append_event'):
+        with patch('papers_feed.paper_manager.PaperManager.get_or_create_paper', return_value=sample_paper), \
+             patch('papers_feed.paper_manager.PaperManager.update_reading_time'), \
+             patch('papers_feed.paper_manager.PaperManager.append_event'):
             
             success = event_processor.process_reading_issue(issue_data)
             assert success
@@ -99,10 +99,10 @@ class TestEventProcessor:
 
     def test_process_all_issues(self, event_processor, sample_paper_issue):
         """Test processing multiple issue types."""
-        with patch('scripts.github_client.GithubClient.get_open_issues') as mock_get_issues, \
-             patch('scripts.github_client.GithubClient.close_issue') as mock_close_issue, \
-             patch('scripts.paper_manager.PaperManager.get_or_create_paper') as mock_get_paper, \
-             patch('scripts.process_events.commit_and_push'):
+        with patch('papers_feed.github_client.GithubClient.get_open_issues') as mock_get_issues, \
+             patch('papers_feed.github_client.GithubClient.close_issue') as mock_close_issue, \
+             patch('papers_feed.paper_manager.PaperManager.get_or_create_paper') as mock_get_paper, \
+             patch('papers_feed.process_events.commit_and_push'):
             
             # Configure mocks
             mock_get_issues.return_value = [sample_paper_issue]
@@ -134,7 +134,7 @@ class TestEventProcessor:
 
     def test_process_no_issues(self, event_processor):
         """Test behavior when no issues exist."""
-        with patch('scripts.github_client.GithubClient.get_open_issues') as mock_get_issues:
+        with patch('papers_feed.github_client.GithubClient.get_open_issues') as mock_get_issues:
             mock_get_issues.return_value = []
             
             event_processor.process_all_issues()
@@ -143,7 +143,7 @@ class TestEventProcessor:
 
     def test_github_api_error(self, event_processor):
         """Test handling of GitHub API errors."""
-        with patch('scripts.github_client.GithubClient.get_open_issues') as mock_get_issues:
+        with patch('papers_feed.github_client.GithubClient.get_open_issues') as mock_get_issues:
             mock_get_issues.return_value = []  # API error returns empty list
             
             event_processor.process_all_issues()
