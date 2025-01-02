@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'data/papers/papers.yaml'
-      - 'src/scripts/frontend/**'
+      - 'src/papers_feed/frontend/**'
       - '.github/workflows/deploy_frontend.yaml'
   workflow_dispatch:
   schedule:
@@ -41,9 +41,9 @@ jobs:
 
       - name: Generate HTML
         run: |
-          python -m scripts.frontend.generate_html \
+          python -m papers_feed.frontend.generate_html \
             --data_path data/papers/papers.yaml \
-            --template_path src/scripts/frontend/index.template.html \
+            --template_path src/papers_feed/frontend/index.template.html \
             --output_path web/index.html
 
       - name: Ensure presence of .nojekyll file

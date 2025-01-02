@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/process-events.yml"
-      - "src/scripts/process_events.py"
+      - "src/papers_feed/process_events.py"
   issues:
     types: [opened]
     labels:
@@ -48,7 +48,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          OUTPUT=$(python -m scripts.process_events)
+          OUTPUT=$(python -m papers_feed.process_events)
           echo "Debug: Script output: $OUTPUT"
           if [[ "$OUTPUT" == *"Events processed."* ]]; then
             echo "SHOULD_TRIGGER=true" >> "$GITHUB_OUTPUT"
