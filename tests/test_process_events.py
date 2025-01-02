@@ -6,8 +6,8 @@ from pathlib import Path
 from datetime import datetime
 from unittest.mock import Mock, patch
 
-from scripts.process_events import EventProcessor
-from scripts.models import Paper
+from papers_feed.process_events import EventProcessor
+from papers_feed.models import Paper
 
 
 @pytest.fixture
