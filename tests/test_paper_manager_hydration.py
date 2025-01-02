@@ -5,8 +5,8 @@ from pathlib import Path
 from datetime import datetime
 from unittest.mock import Mock, patch
 
-from scripts.models import Paper
-from scripts.paper_manager import PaperManager
+from papers_feed.models import Paper
+from papers_feed.paper_manager import PaperManager
 
 
 @pytest.fixture
