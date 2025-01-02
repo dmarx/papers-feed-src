@@ -7,8 +7,8 @@ import tempfile
 from unittest.mock import Mock, patch
 import xml.etree.ElementTree as ET
 
-from scripts.arxiv_client import ArxivClient
-from scripts.models import Paper
+from papers_feed.arxiv_client import ArxivClient
+from papers_feed.models import Paper
 
 
 @pytest.fixture
