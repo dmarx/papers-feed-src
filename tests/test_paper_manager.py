@@ -4,9 +4,9 @@ from pathlib import Path
 from datetime import datetime
 from unittest.mock import Mock, patch
 
-from scripts.paper_manager import PaperManager
-from scripts.models import Paper, ReadingSession, PaperVisitEvent
-from scripts.arxiv_client import ArxivClient
+from papers_feed.paper_manager import PaperManager
+from papers_feed.models import Paper, ReadingSession, PaperVisitEvent
+from papers_feed.arxiv_client import ArxivClient
 
 
 @pytest.fixture
