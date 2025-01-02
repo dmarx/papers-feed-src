@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.asset_manager import PaperAssetManager
+from papers_feed.asset_manager import PaperAssetManager
 
 @pytest.fixture
 def manager(test_dir):
