@@ -3,13 +3,13 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.asset_manager import PaperAssetManager
+from papers_feed.asset_manager import PaperAssetManager
 
 @pytest.fixture
 def manager(test_dir):
     """Create AssetManager with mocked dependencies."""
-    with patch('scripts.arxiv_client.ArxivClient') as mock_arxiv, \
-         patch('scripts.markdown_service.MarkdownService') as mock_markdown:
+    with patch('papers_feed.arxiv_client.ArxivClient') as mock_arxiv, \
+         patch('papers_feed.markdown_service.MarkdownService') as mock_markdown:
         
         # Configure mock ArxivClient
         mock_arxiv.return_value.get_paper_status.return_value = {

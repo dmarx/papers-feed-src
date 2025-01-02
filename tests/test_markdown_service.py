@@ -5,8 +5,8 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 
-from scripts.markdown_service import MarkdownService
-from scripts.paper_manager import PaperManager
+from papers_feed.markdown_service import MarkdownService
+from papers_feed.paper_manager import PaperManager
 
 @pytest.fixture
 def paper_manager(test_dir):
@@ -68,7 +68,7 @@ class TestMarkdownService:
         main_tex = source_dir / "main.tex"
         
         # Create initial metadata using the paper directory name from fixture
-        from scripts.models import Paper
+        from papers_feed.models import Paper
         paper = Paper(
             arxivId=paper_dir.name,
             title="Test Paper",

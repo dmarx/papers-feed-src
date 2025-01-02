@@ -1,7 +1,7 @@
 # tests/test_github_client.py
 import pytest
 from unittest.mock import Mock, patch
-from scripts.github_client import GithubClient
+from papers_feed.github_client import GithubClient
 
 @pytest.fixture
 def client():

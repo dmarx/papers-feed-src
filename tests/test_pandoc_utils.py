@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 import pytest
-from scripts.pandoc_utils import PandocConverter, PandocConfig, create_default_config
+from papers_feed.pandoc_utils import PandocConverter, PandocConfig, create_default_config
 
 # Register the integration mark to remove warnings
 pytest.mark.integration = pytest.mark.integration

@@ -3,7 +3,7 @@
 
 import pytest
 from pathlib import Path
-from scripts.tex_utils import find_main_tex_file, score_tex_file
+from papers_feed.tex_utils import find_main_tex_file, score_tex_file
 
 @pytest.fixture
 def tex_dir(tmp_path):
