@@ -68,7 +68,7 @@ class TestMarkdownService:
         main_tex = source_dir / "main.tex"
         
         # Create initial metadata using the paper directory name from fixture
-        from scripts.models import Paper
+        from papers_feed.models import Paper
         paper = Paper(
             arxivId=paper_dir.name,
             title="Test Paper",
